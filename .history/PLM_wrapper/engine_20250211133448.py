@@ -1,11 +1,10 @@
 import pathlib
 import torch
-# import ankh
+import ankh
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
 from tqdm import tqdm
-import torch.nn.functional as F
 from transformers import T5Tokenizer, T5EncoderModel, EsmModel, EsmTokenizer, BertModel, BertTokenizer
 
 class ProteinLanguageModel:
@@ -15,8 +14,7 @@ class ProteinLanguageModel:
     """
     def __init__(self, 
                  model_name: str,
-                 max_length: int = 1536,
-                 max_pad: int = 1536,
+                 max_length: int = 1024,
                  device: str = "cuda" if torch.cuda.is_available() else 'cpu'):
         """
         Initialize the PLM wrapper
@@ -29,7 +27,6 @@ class ProteinLanguageModel:
         """
         self.model_name = model_name.lower()
         self.max_length = max_length
-        self.max_pad = max_pad
         self.device = device
 
         # init model and tokenizer
@@ -97,11 +94,6 @@ class ProteinLanguageModel:
                 hidden_states = outputs.last_hidden_state[layer]
             else:
                 hidden_states = outputs.last_hidden_state
-            
-             # Pad hidden states if necessary
-            if hidden_states.size(2) < self.max_pad:
-              padding_size = (0, self.max_pad - hidden_states.size(2))  # Padding on the right side
-              hidden_states = F.pad(hidden_states, padding_size, mode='constant', value=0)
         
         # pool embeddings
         if pool_method == 'mean':

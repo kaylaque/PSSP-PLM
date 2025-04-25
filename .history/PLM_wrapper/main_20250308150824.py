@@ -1,6 +1,6 @@
 import pathlib
 import torch
-import ankh
+# import ankh
 import numpy as np
 import pandas as pd
 import time
@@ -22,7 +22,6 @@ def process_sequences(model_name, fasta_path, output_dir, batch_size=100):
     # Initialize model
     plm = ProteinLanguageModel(
         model_name=model_name,
-        max_length=1200,
         device="cuda" if torch.cuda.is_available() else "cpu"
     )
     
@@ -43,6 +42,10 @@ def process_sequences(model_name, fasta_path, output_dir, batch_size=100):
     fasta_sequences = SeqIO.parse(fasta_path, "fasta")
     
     for item in tqdm(fasta_sequences):
+        if count>=2:
+          break
+        else:
+          count+=1
           ids_list.append(item.id)
           # Get embeddings for sequence
           embeddings = plm.get_embeddings(
@@ -95,7 +98,8 @@ def main():
     output_dir = args.output_dir
     
     # List of models to process
-    models = ['esm2', 'bert', 't5', 'ankh']
+    models = ['esm2', 'bert', 't5']
+            #   'ankh']
     
     # Process sequences with each model
     for model_name in models:

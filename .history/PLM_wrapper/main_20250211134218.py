@@ -43,6 +43,10 @@ def process_sequences(model_name, fasta_path, output_dir, batch_size=100):
     fasta_sequences = SeqIO.parse(fasta_path, "fasta")
     
     for item in tqdm(fasta_sequences):
+        if count>=2:
+          break
+        else:
+          count+=1
           ids_list.append(item.id)
           # Get embeddings for sequence
           embeddings = plm.get_embeddings(

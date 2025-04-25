@@ -1,6 +1,6 @@
 import pathlib
 import torch
-# import ankh
+import ankh
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
